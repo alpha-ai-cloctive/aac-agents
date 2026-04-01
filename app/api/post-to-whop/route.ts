@@ -1,10 +1,6 @@
 import { NextResponse } from "next/server";
 import { Whop } from "@whop/sdk";
 
-const whop = new Whop({
-  apiKey: process.env.WHOP_API_KEY,
-});
-
 export async function POST(request: Request) {
   try {
     const { channelId, content, agentName } = await request.json();
@@ -15,6 +11,10 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
+
+    const whop = new Whop({
+      apiKey: process.env.WHOP_API_KEY,
+    });
 
     const message = await whop.messages.create({
       channel_id: channelId,

@@ -4,11 +4,12 @@ import { useState } from "react";
 import { agents } from "@/lib/agents";
 
 const channels = [
-  { id: "general", name: "General" },
-  { id: "wins", name: "Wins" },
-  { id: "tech-help", name: "Tech Help" },
-  { id: "introductions", name: "Introductions" },
-  { id: "resources", name: "Resources" },
+  { id: "BBBSaIAdqoA6cZ", name: "Wins & Results" },
+  { id: "ZVOPS8rTadcx2O", name: "Introduce Yourself" },
+  { id: "aMPTdxQzaVfl6I", name: "Accountability" },
+  { id: "tPbD3BgeRhOn4U", name: "Tool Reviews" },
+  { id: "DaDBfPnN6cScaO", name: "Trending Today" },
+  { id: "PD66pXM3XhQ1nO", name: "Welcome & Rules" },
 ];
 
 const exampleMessages = [
