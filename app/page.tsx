@@ -49,14 +49,13 @@ export default function Home() {
   const [generateMessage, setGenerateMessage] = useState("");
   const [generatedResponse, setGeneratedResponse] = useState("");
   const [generating, setGenerating] = useState(false);
-  const [posting, setPosting] = useState(false);
-  const [postStatus, setPostStatus] = useState("");
+  const [copyStatus, setCopyStatus] = useState("");
 
   async function handleGenerate() {
     if (!generateMessage.trim()) return;
     setGenerating(true);
     setGeneratedResponse("");
-    setPostStatus("");
+    setCopyStatus("");
     try {
       const res = await fetch("/api/generate", {
         method: "POST",
@@ -77,27 +76,15 @@ export default function Home() {
     }
   }
 
-  async function handlePostToWhop() {
+  async function handleCopyToClipboard() {
     if (!generatedResponse) return;
-    setPosting(true);
-    setPostStatus("");
     try {
-      const res = await fetch("/api/post-to-whop", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          channelId: generateChannel,
-          content: generatedResponse,
-          agentName: generateAgent,
-        }),
-      });
-      const data = await res.json();
-      if (data.error) throw new Error(data.error);
-      setPostStatus("Posted successfully!");
+      await navigator.clipboard.writeText(generatedResponse);
+      setCopyStatus(`Copied! Paste into Whop as ${generateAgent}`);
+      setTimeout(() => setCopyStatus(""), 3000);
     } catch {
-      setPostStatus("Failed to post. Check your Whop API key.");
-    } finally {
-      setPosting(false);
+      setCopyStatus("Failed to copy to clipboard.");
+      setTimeout(() => setCopyStatus(""), 3000);
     }
   }
 
@@ -106,7 +93,7 @@ export default function Home() {
     setGenerateMessage(message);
     setGenerating(true);
     setGeneratedResponse("");
-    setPostStatus("");
+    setCopyStatus("");
     try {
       const res = await fetch("/api/generate", {
         method: "POST",
@@ -337,13 +324,15 @@ export default function Home() {
                 <p className="text-sm text-gray-200 whitespace-pre-wrap mb-4">
                   {generatedResponse}
                 </p>
+                <p className="text-xs text-gray-500 mb-3">
+                  Switch to {generateAgent}&apos;s Whop tab, paste and send.
+                </p>
                 <div className="flex gap-2">
                   <button
-                    onClick={handlePostToWhop}
-                    disabled={posting}
-                    className="bg-gold text-navy font-medium text-sm px-4 py-2 rounded-lg hover:bg-gold/90 transition-colors disabled:opacity-50"
+                    onClick={handleCopyToClipboard}
+                    className="bg-gold text-navy font-medium text-sm px-4 py-2 rounded-lg hover:bg-gold/90 transition-colors"
                   >
-                    {posting ? "Posting..." : "Post to Whop"}
+                    Copy to Clipboard
                   </button>
                   <button
                     onClick={() => {
@@ -362,15 +351,15 @@ export default function Home() {
                     Regenerate
                   </button>
                 </div>
-                {postStatus && (
+                {copyStatus && (
                   <p
                     className={`text-xs mt-2 ${
-                      postStatus.includes("success")
+                      copyStatus.includes("Copied")
                         ? "text-green-400"
                         : "text-red-400"
                     }`}
                   >
-                    {postStatus}
+                    {copyStatus}
                   </p>
                 )}
               </div>
